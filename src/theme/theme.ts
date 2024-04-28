@@ -1,0 +1,50 @@
+import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    "primary": "rgb(0, 82, 221)",
+    "onPrimary": "rgb(255, 255, 255)",
+    "primaryContainer": "rgb(219, 225, 255)",
+    "onPrimaryContainer": "rgb(0, 23, 76)",
+    "secondary": "rgb(0, 110, 32)",
+    "onSecondary": "rgb(255, 255, 255)",
+    "secondaryContainer": "rgb(111, 255, 123)",
+    "onSecondaryContainer": "rgb(0, 34, 5)",
+    "tertiary": "rgb(132, 84, 0)",
+    "onTertiary": "rgb(255, 255, 255)",
+    "tertiaryContainer": "rgb(255, 221, 182)",
+    "onTertiaryContainer": "rgb(42, 24, 0)",
+    "error": "rgb(186, 26, 26)",
+    "onError": "rgb(255, 255, 255)",
+    "errorContainer": "rgb(255, 218, 214)",
+    "onErrorContainer": "rgb(65, 0, 2)",
+    "background": "#EEEFF5",
+    "onBackground": "#f5f5f5",
+    "surface": "#000",
+    "onSurface": "#000",
+    "surfaceVariant": "rgb(226, 225, 236)",
+    "onSurfaceVariant": "rgb(69, 70, 79)",
+    "outline": "#D4D4D4",
+    "outlineVariant": "rgb(197, 198, 208)",
+    "shadow": "rgb(0, 0, 0)",
+    "scrim": "rgb(0, 0, 0)",
+    "inverseSurface": "rgb(48, 48, 52)",
+    "inverseOnSurface": "rgb(242, 240, 244)",
+    "inversePrimary": "rgb(180, 197, 255)",
+    "elevation": {
+      "level0": "transparent",
+      "level1": "rgb(241, 243, 253)",
+      "level2": "rgb(234, 238, 252)",
+      "level3": "rgb(226, 232, 251)",
+      "level4": "rgb(224, 231, 251)",
+      "level5": "rgb(218, 227, 250)"
+    },
+    "surfaceDisabled": "rgba(27, 27, 31, 0.12)",
+    "onSurfaceDisabled": "rgba(27, 27, 31, 0.38)",
+    "backdrop": "rgba(46, 48, 56, 0.4)",
+  },
+};
+
+export default theme;
