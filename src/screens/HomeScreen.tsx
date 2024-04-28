@@ -13,7 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // components
 import GoBackBtn from '../components/GoBackBtn';
 import AddBtn from '../components/AddBtn';
- 
+
 // backend
 import { AuthGetCurrentUser } from '../utils/auth';
 import { DBFetchAsm, DBFetchCourses, DBFetchUserData } from '../utils/db';
@@ -151,26 +151,35 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
   }
 
   const HandleFetchAsm = async () => {
-    console.log("curreutUserID: ", curreutUserID)
+    // console.log("curreutUserID: ", curreutUserID)
     const res: any = await DBFetchAsm(curreutUserID);
-    console.log("HandleFetchAsm: ", res);
 
-    const upComingAsm = res.filter((asm: any) => {
+    const upComingAsm = res.map((asm: any) => {
       const dueDate = new Date(asm.due_date);
       const today = new Date();
-      const diffDays = dueDate.getDate() - today.getDate();
 
-      console.log("dueDate: ", dueDate.toLocaleDateString());
-      console.log("today: ", today);
-      console.log("diffDays: ", diffDays);
+      dueDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
 
+      const options = { timeZone: "Asia/Hong_Kong" };
 
-      return diffDays > 0;
-    });
+      const dueDateHKG = dueDate.toLocaleDateString("en-US", options);
+      const todayHKG = today.toLocaleDateString("en-US", options);
+
+      const timeDiff = dueDate.getTime() - today.getTime(); // Difference in milliseconds
+      const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+
+      // console.log("TODAY:", today, "DUE:", dueDate, "Diff:", diffDays); // Output: 4
+      asm.diffDays = diffDays;
+
+      return asm;
+    }).filter((asm: any) => asm.diffDays > 0);
+
+    console.log("upComingAsm: ", upComingAsm);
 
     setAsmData(upComingAsm);
   }
-  
+
   useFocusEffect(
     useCallback(() => {
       // Do something when the screen is focused
@@ -541,7 +550,7 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
                           }}
                         >
                           <Text style={{ color: '#F8C510', fontWeight: 'bold' }} >
-                            {/* {diffDays} days */}
+                            {asm.diffDays} days
                           </Text>
                         </View>
                       </TouchableOpacity>
