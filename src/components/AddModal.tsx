@@ -7,6 +7,7 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 // components
 import AddReminder from './AddReminder';
 import AddAsm from './AddAsm';
+import AddTask from './AddTask';
 
 // icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,24 +16,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 // backend
 import { DBFetchCourses } from '../utils/db';
-
-const FirstRoute = () => (
-  <View style={{ flex: 1 }}>
-    <Text>1</Text>
-  </View>
-);
-
-const SecondRoute = () => (
-  <View style={{ flex: 1 }}>
-    <Text>2</Text>
-  </View>
-);
-
-const ThirdRoute = () => (
-  <View style={{ flex: 1 }}>
-    <Text>3</Text>
-  </View>
-);
 
 const FourthRoute = () => (
   <View style={{ flex: 1 }}>
@@ -58,7 +41,7 @@ const AddModal = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () => voi
     { key: 'reminder', title: 'Reminder' },
     { key: 'asm', title: 'Asm' },
     { key: 'task', title: 'Task' },
-    { key: 'project', title: 'Project' },
+    { key: 'schedule', title: 'Schedule' },
   ]);
 
   const renderScene: any = useCallback(({ route }: { route: any }) => {
@@ -68,8 +51,8 @@ const AddModal = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () => voi
       case 'asm':
         return <AddAsm closeModal={closeModal} />;
       case 'task':
-        return <ThirdRoute />;
-      case 'project':
+        return <AddTask closeModal={closeModal} />;
+      case 'schedule':
         return <FourthRoute />;
       default:
         return null;

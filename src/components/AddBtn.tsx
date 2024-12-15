@@ -12,13 +12,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const AddBtn = () => {
+const AddBtn = ({refresh}: {refresh: () => void}) => {
 
   const theme = useTheme();
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const CloseModal = () => setModalVisible(false);
+  const CloseModal = () => {
+    setModalVisible(false);
+    refresh();
+  };
 
   const [isSwipe, setIsSwipe] = useState(false);
 
@@ -42,7 +45,7 @@ const AddBtn = () => {
         swipeDirection="down"
         onSwipeStart={() => setIsSwipe(true)}
         onSwipeMove={(persentageShown: any) => {
-          console.log("persentageShown: ", persentageShown);
+          // console.log("persentageShown: ", persentageShown);
         }}
         onSwipeComplete={() => setModalVisible(false)}
         onSwipeCancel={() => setIsSwipe(false)}
@@ -91,7 +94,7 @@ const AddBtn = () => {
                 color: '#000',
               }}
             >
-              Add New Item
+              Add New
               </Text>
             <TouchableOpacity>
               <AntDesign name='close' size={24} color="#000" onPress={() => setModalVisible(false)} />

@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 const DBCreateUserData = async (auth_id: string, username: string, email: string, password: string) => {
   try {
     const { data, error } = await supabase
-      .from('User')
+      .from('sys_user')
       .insert([{
         auth_id: auth_id,
         username: username,
@@ -24,7 +24,7 @@ const DBCreateUserData = async (auth_id: string, username: string, email: string
 const DBFetchUserData = async (auth_id: string) => {
   try {
     const { data, error } = await supabase
-      .from('User')
+      .from('sys_user')
       .select('*')
       .eq('auth_id', auth_id);
 
@@ -41,7 +41,7 @@ const DBFetchUserData = async (auth_id: string) => {
 const DBFetchUserID = async (auth_id: string) => {
   try {
     const { data, error }: { data: any, error: any } = await supabase
-      .from('User')
+      .from('sys_user')
       .select('id')
       .eq('auth_id', auth_id);
 
@@ -60,7 +60,7 @@ const DBFetchUserID = async (auth_id: string) => {
 const DBFetchCourses = async () => {
   try {
     const { data, error } = await supabase
-      .from('Courses')
+      .from('courses')
       .select('*')
       .eq('enrolled_user', '22');
 
@@ -74,10 +74,10 @@ const DBFetchCourses = async () => {
   }
 }
 
-const DBFetchAsm = async (userId: any) => {
+const DBFetchAsms = async (userId: any) => {
   try {
     const { data, error } = await supabase
-      .from('Assignments')
+      .from('view_asms')
       .select('*')
       .eq('user_id', userId);
 
@@ -93,7 +93,7 @@ const DBFetchAsm = async (userId: any) => {
 
 const DBCreateAsm = async (
   title: string,
-  course: string,
+  courseId: number,
   notification: boolean,
   due_date: string,
   due_time: string,
@@ -103,11 +103,11 @@ const DBCreateAsm = async (
 ) => {
   try {
     const { data, error } = await supabase
-      .from('Assignments')
+      .from('asm')
       .insert([{
         title: title,
-        course: course,
-        notificationOn: notification,
+        course_id: courseId,
+        noti_on: notification,
         due_date: due_date,
         due_time: due_time,
         note: note,
@@ -125,11 +125,60 @@ const DBCreateAsm = async (
   }
 }
 
+const DBDeleteAsm = async (id: any) => {
+  try {
+    const { error } = await supabase
+    .from('asm')
+    .delete()
+    .eq('id', id);
+
+    if (error) {
+      return error;
+    } else {
+      console.log("DELETED ASM: ", id);
+    }
+  } catch (error) {
+    console.warn("Error on DeleteAsm:", error);
+  }
+}
+
+const DBCreateTask = async (
+  title: string,
+  date: any,
+  shiftIds: any,
+  statusId: number,
+  note: string,
+  userId: any,
+) => {
+  try {
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert([{
+        title: title,
+        date: date,
+        shift_ids: shiftIds,
+        status_id: statusId,
+        note: note,
+        user_id: userId,
+      }]);
+
+    if (error) {
+      return error;
+    } else {
+      return JSON.stringify(data);
+    }
+  } catch (error) {
+    console.warn("Error on CreateTask:", error);
+  }
+}
+
 export {
   DBCreateUserData,
   DBFetchCourses,
   DBCreateAsm,
-  DBFetchAsm,
+  DBFetchAsms,
   DBFetchUserData,
   DBFetchUserID,
+  DBDeleteAsm,
+  DBCreateTask,
 }

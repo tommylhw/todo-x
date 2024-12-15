@@ -21,6 +21,7 @@
     "@supabase/supabase-js": "^2.39.3",
     "@types/react-native-snap-carousel": "^3.8.10",
     "@types/react-redux": "^7.1.33",
+    "axios": "^1.7.9",
     "patch-package": "^8.0.0",
     "react": "18.2.0",
     "react-native": "0.73.4",

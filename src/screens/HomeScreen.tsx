@@ -27,7 +27,7 @@ import AddBtn from '../components/AddBtn';
 
 // backend
 import {AuthGetCurrentUser} from '../utils/auth';
-import {DBFetchAsm, DBFetchCourses, DBFetchUserData} from '../utils/db';
+import {DBFetchAsms, DBFetchCourses, DBFetchUserData} from '../utils/db';
 
 // import Carousel from 'react-native-reanimated-carousel';
 import Carousel from 'react-native-snap-carousel';
@@ -42,6 +42,7 @@ import {
   selectCurrentUserID,
 } from '../stores/AuthSlice';
 import {setCourses, selectCourses} from '../stores/CoursesSlice';
+import AsmComponent from '../components/AsmComponent';
 
 const dummyAsm = [
   {
@@ -168,7 +169,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
   const HandleFetchAsm = async () => {
     // console.log("curreutUserID: ", curreutUserID)
-    const res: any = await DBFetchAsm(curreutUserID);
+    const res: any = await DBFetchAsms(curreutUserID);
 
     const upComingAsm = res
       .map((asm: any) => {
@@ -212,7 +213,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
       };
     }, []),
   );
-
+ 
   // Fetch Data for the app
   const FetchCourseData = async () => {
     try {
@@ -342,7 +343,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
               >
                 <AntDesign name="pluscircle" size={20} color={theme.colors.primary} />
               </TouchableOpacity> */}
-              <AddBtn />
+              <AddBtn refresh={() => onRefresh()} />
             </View>
 
             <View style={{width: '100%'}}>
@@ -424,7 +425,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
                 }}>
                 Upcoming Assignments
               </Text>
-              <AddBtn />
+              <AddBtn refresh={() => onRefresh()} />
             </View>
 
             <View
@@ -444,102 +445,11 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
                   borderRadius: 7,
                   marginTop: 10,
                   paddingHorizontal: 10,
+                  paddingVertical: 10,
                   backgroundColor: '#fff',
                 }}>
-                {/* {
-                  dummyAsm.map((asm, index) => (
-                    <>
-                      <TouchableOpacity
-                        key={index}
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 10,
-                          gap: 10,
-                        }}
-                      >
-                        <View
-                          style={{
-                            paddingVertical: 5,
-                            paddingHorizontal: 10,
-                            backgroundColor: "#6E42C1",
-                            borderRadius: 5,
-                          }}
-                        >
-                          <Text style={{ color: '#fff' }}>
-                            COMP1942
-                          </Text>
-                        </View>
-
-                        <View style={{ flex: 1, }}>
-                          <Text
-                            numberOfLines={1}
-                            ellipsizeMode='tail'
-                          >
-                            Assignment 1 #################################
-                          </Text>
-                        </View>
-
-                        <View
-                          style={{
-                            paddingVertical: 5,
-                            paddingHorizontal: 10,
-                            borderWidth: 1,
-                            borderColor: "#F8C510",
-                            borderRadius: 5,
-                          }}
-                        >
-                          <Text style={{ color: '#F8C510', fontWeight: 'bold' }} >
-                            4 days
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                      <Divider />
-                    </>
-
-                  ))
-                } */}
-
                 {asmData?.map((asm: any, index: number) => (
-                  <View key={index}>
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingVertical: 10,
-                        gap: 10,
-                      }}>
-                      <View
-                        style={{
-                          paddingVertical: 5,
-                          paddingHorizontal: 10,
-                          backgroundColor: '#6E42C1',
-                          borderRadius: 5,
-                        }}>
-                        <Text style={{color: '#fff'}}>{asm.course}</Text>
-                      </View>
-
-                      <View style={{flex: 1}}>
-                        <Text numberOfLines={1} ellipsizeMode="tail">
-                          {asm.title}
-                        </Text>
-                      </View>
-
-                      <View
-                        style={{
-                          paddingVertical: 5,
-                          paddingHorizontal: 10,
-                          borderWidth: 1,
-                          borderColor: '#F8C510',
-                          borderRadius: 5,
-                        }}>
-                        <Text style={{color: '#F8C510', fontWeight: 'bold'}}>
-                          {asm.diffDays} days
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                    <Divider />
-                  </View>
+                  <AsmComponent key={index} asm={asm} refresh={() => onRefresh()} />
                 ))}
               </ScrollView>
             </View>
@@ -563,7 +473,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
                 }}>
                 Next Tasks
               </Text>
-              <AddBtn />
+              <AddBtn refresh={() => onRefresh()} />
             </View>
 
             <ScrollView
