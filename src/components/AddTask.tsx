@@ -35,11 +35,19 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
   const [date, setDate] = useState(new Date());
   const [dateOpen, setDateOpen] = useState(false);
 
+  const [tagDropDownOpen, setTagDropDownOpen] = useState(false);
+  const [selectedTagId, setSelectedTagId] = useState(0);
+  const [tagItems, setTagItems] = useState([
+    {label: 'Personal', value: 0},
+    {label: 'Work', value: 1},
+    {label: 'Study', value: 2},
+  ]);
+
   // shift dropdown picker
   const [shiftDropDownOpen, setShiftDropDownOpen] = useState(false);
   const [selectedShiftIds, setSelectedShiftIds] = useState<string[]>([]);
   const [shiftItems, setShiftItems] = useState([
-    {label: 'Morning', value: '0', icon: () => <Text>🌅</Text>},
+    {label: 'Morning', value: '0', icon: () => <Text>☀️</Text>},
     {label: 'Afternoon', value: '1', icon: () => <Text>🌄</Text>},
     {label: 'Evening', value: '2', icon: () => <Text>🌃</Text>},
   ]);
@@ -120,8 +128,53 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
           />
         </View>
 
+        <View
+          style={{
+            width: '100%',
+            gap: 5,
+            marginVertical: 10,
+            zIndex: 11,
+          }}>
+          <Text>Tag</Text>
+          <DropDownPicker
+            items={tagItems}
+            open={tagDropDownOpen}
+            setOpen={setTagDropDownOpen}
+            value={selectedTagId}
+            setValue={setSelectedTagId}
+            placeholder=""
+            closeAfterSelecting={true}
+            containerStyle={{
+              width: '100%',
+              borderWidth: 0,
+              borderRadius: 7,
+              shadowColor: '#000',
+              backgroundColor: '#F6F6F6',
+            }}
+            listMode="FLATLIST"
+            dropDownContainerStyle={{
+              borderTopWidth: 1,
+              borderTopColor: '#ccc',
+              borderWidth: 0,
+            }}
+            style={{
+              borderWidth: 0,
+              backgroundColor: '#F6F6F6',
+            }}
+          />
+        </View>
+
         <Divider />
 
+        {/* <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            gap: 10,
+            marginVertical: 10,
+            zIndex: 10,
+          }}
+        > */}
         <View
           style={{
             width: '100%',
@@ -141,26 +194,6 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
             onPress={() => setDateOpen(true)}>
             <Text>{date.toDateString()}</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-            style={{
-              width: '50%',
-              paddingVertical: 10,
-              backgroundColor: '#F6F6F6',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 7,
-            }}
-            onPress={() => setDateOpen(true)}
-          >
-            <Text>
-              {date.toLocaleTimeString().localeCompare(
-                new Date().toLocaleTimeString()
-              ) === 0 ? "Now" : date.toLocaleTimeString(
-                'en-US',
-                { hour: 'numeric', minute: 'numeric', hour12: false }
-              )}
-            </Text>
-          </TouchableOpacity> */}
 
           <DatePicker
             modal
@@ -214,6 +247,8 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
             }}
           />
         </View>
+        {/* </View> */}
+        
 
         <View
           style={{
@@ -236,16 +271,10 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
               borderWidth: 0,
               borderRadius: 7,
               shadowColor: '#000',
-              // shadowOffset: {
-              //   width: 1,
-              //   height: 1,
-              // },
-              // shadowOpacity: 0.1,
               backgroundColor: '#F6F6F6',
             }}
             listMode="FLATLIST"
             dropDownContainerStyle={{
-              // backgroundColor: '#F6F6F6',
               borderTopWidth: 1,
               borderTopColor: '#ccc',
               borderWidth: 0,
@@ -277,7 +306,8 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
               width: '100%',
               backgroundColor: '#F6F6F6',
               marginVertical: 5,
-              height: 200,
+              // height: 200,
+
             }}
             outlineStyle={{
               borderRadius: 7,
