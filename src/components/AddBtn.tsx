@@ -94,7 +94,7 @@ const AddBtn = ({refresh}: {refresh: () => void}) => {
                 color: '#000',
               }}
             >
-              Add New
+              New Event
               </Text>
             <TouchableOpacity>
               <AntDesign name='close' size={24} color="#000" onPress={() => setModalVisible(false)} />

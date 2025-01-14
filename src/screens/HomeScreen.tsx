@@ -27,7 +27,12 @@ import AddBtn from '../components/AddBtn';
 
 // backend
 import {AuthGetCurrentUser} from '../utils/auth';
-import {DBFetchAsms, DBFetchCourses, DBFetchUserData} from '../utils/db';
+import {
+  DBFetchAsms,
+  DBFetchCourses,
+  DBFetchUserData,
+  DBFetchTasks,
+} from '../utils/db';
 
 // import Carousel from 'react-native-reanimated-carousel';
 import Carousel from 'react-native-snap-carousel';
@@ -43,59 +48,7 @@ import {
 } from '../stores/AuthSlice';
 import {setCourses, selectCourses} from '../stores/CoursesSlice';
 import AsmComponent from '../components/AsmComponent';
-
-const dummyAsm = [
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 1',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 2',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 3',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 4',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 5',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 6',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 7',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 8',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 9',
-    status: 'In Progress',
-  },
-  {
-    courseCode: 'COMP1942',
-    assignmentName: 'Assignment 10',
-    status: 'In Progress',
-  },
-];
+import TaskComponent from '../components/TaskComponent';
 
 const dummyReminders = [
   {
@@ -115,24 +68,6 @@ const dummyReminders = [
   },
 ];
 
-const dummyTasks = [
-  {
-    title: 'Task 1',
-    date: '2022-10-10',
-    time: '10:00',
-  },
-  {
-    title: 'Task 2',
-    date: '2022-10-10',
-    time: '10:00',
-  },
-  {
-    title: 'Task 3',
-    date: '2022-10-10',
-    time: '10:00',
-  },
-];
-
 const WIDTH = Dimensions.get('window').width;
 
 const HomeScreen = ({navigation}: {navigation: any}) => {
@@ -142,6 +77,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
   const curreutUserID = useSelector(selectCurrentUserID);
 
   const [asmData, setAsmData] = useState<any>();
+  const [tasksData, setTasksData] = useState<any>();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -167,7 +103,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     dispatch(setCurrentUserID(JSON.parse(userDataFromDB)[0].id));
   };
 
-  const HandleFetchAsm = async () => {
+  const HandleFetchAsms = async () => {
     // console.log("curreutUserID: ", curreutUserID)
     const res: any = await DBFetchAsms(curreutUserID);
 
@@ -192,28 +128,34 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
         return asm;
       })
+      .sort((a: any, b: any) => a.diffDays - b.diffDays)
       .filter((asm: any) => asm.diffDays > 0);
 
     console.log('upComingAsm: ', upComingAsm);
 
-    // setAsmData(upComingAsm);
-    setAsmData(res);
+    setAsmData(upComingAsm);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      // Do something when the screen is focused
-      console.log('HomeScreen is focused');
-      HandleAuthGetCurrentUser();
-      HandleFetchAsm();
-      return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
-        console.log('HomeScreen is unfocused');
-      };
-    }, []),
-  );
- 
+  const HandleFetchTasks = async () => {
+    const res: any = await DBFetchTasks(curreutUserID);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set time to midnight
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7); // Calculate the date 7 days from now
+    nextWeek.setHours(0, 0, 0, 0); // Set time to midnight
+
+    const upComingWeekTasks = res.filter((task: any) => {
+      const taskDate = new Date(task.date);
+      taskDate.setHours(0, 0, 0, 0); // Set time to midnight
+      
+      return taskDate >= today && taskDate < nextWeek;
+    });
+
+    console.log('up coming tasks: ', upComingWeekTasks);
+    setTasksData(upComingWeekTasks);
+  };
+
   // Fetch Data for the app
   const FetchCourseData = async () => {
     try {
@@ -226,10 +168,26 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      // Do something when the screen is focused
+      console.log('HomeScreen is focused');
+      HandleAuthGetCurrentUser();
+      HandleFetchAsms();
+      HandleFetchTasks();
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        console.log('HomeScreen is unfocused');
+      };
+    }, []),
+  );
+
   useEffect(() => {
     FetchCourseData();
     HandleAuthGetCurrentUser();
-    HandleFetchAsm();
+    HandleFetchAsms();
+    HandleFetchTasks();
   }, []);
 
   // Refresh Control
@@ -238,7 +196,8 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     setRefreshing(true);
 
     FetchCourseData();
-    HandleFetchAsm();
+    HandleFetchAsms();
+    HandleFetchTasks();
     HandleAuthGetCurrentUser();
 
     setTimeout(() => {
@@ -449,7 +408,11 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
                   backgroundColor: '#fff',
                 }}>
                 {asmData?.map((asm: any, index: number) => (
-                  <AsmComponent key={index} asm={asm} refresh={() => onRefresh()} />
+                  <AsmComponent
+                    key={index}
+                    asm={asm}
+                    refresh={() => onRefresh()}
+                  />
                 ))}
               </ScrollView>
             </View>
@@ -484,27 +447,12 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
                 paddingVertical: 10,
                 paddingHorizontal: 5,
               }}>
-              {dummyTasks.map((task, index) => (
-                <TouchableOpacity
+              {tasksData?.map((task: any, index: number) => (
+                <TaskComponent
                   key={index}
-                  style={{
-                    width: 200,
-                    height: 125,
-                    borderRadius: 7,
-                    marginRight: 10,
-                    padding: 10,
-                    backgroundColor: '#fff',
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.2,
-                  }}>
-                  <Text>{task.title}</Text>
-                  <Text>{task.date}</Text>
-                  <Text>{task.time}</Text>
-                </TouchableOpacity>
+                  task={task}
+                  refresh={() => onRefresh()}
+                />
               ))}
             </ScrollView>
           </View>

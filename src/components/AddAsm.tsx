@@ -395,16 +395,18 @@ const AddAsm = ({closeModal}: {closeModal: () => void}) => {
         }}
         disabled={!title || !selectedCourseId || !selectedStatus} // set the button to disabled if the input-box is empty
         onPress={() => HandleCreateAsm()}>
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: 'bold',
-            color: '#fff',
-          }}>
-          Add
-        </Text>
-
-        {isLoading && <ActivityIndicator size="small" color="#fff" />}
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#fff',
+            }}>
+            Add
+          </Text>
+        )}
       </TouchableOpacity>
     </View>
   );

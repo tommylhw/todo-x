@@ -69,6 +69,7 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
       date,
       selectedShiftIds,
       selectedStatusId,
+      selectedTagId,
       note,
       currentUserID,
     );
@@ -79,6 +80,7 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
       setNote('');
       setSelectedShiftIds([]);
       setSelectedStatusId(0);
+      setSelectedTagId(0);
 
       console.log('HandleCreateTask: ', action);
       setIsLoading(false);
@@ -97,7 +99,7 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
         paddingVertical: 20,
         justifyContent: 'space-between',
       }}>
-      <View>
+      <ScrollView>
         <View
           style={{
             width: '100%',
@@ -197,7 +199,7 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
 
           <DatePicker
             modal
-            mode="datetime"
+            mode="date"
             open={dateOpen}
             date={date}
             onConfirm={date => {
@@ -248,7 +250,6 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
           />
         </View>
         {/* </View> */}
-        
 
         <View
           style={{
@@ -306,8 +307,7 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
               width: '100%',
               backgroundColor: '#F6F6F6',
               marginVertical: 5,
-              // height: 200,
-
+              height: 200,
             }}
             outlineStyle={{
               borderRadius: 7,
@@ -319,14 +319,14 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
             outlineColor="rgba(0,0,0,0)"
           />
         </View>
-      </View>
+      </ScrollView>
 
       <TouchableOpacity
         style={{
           width: '100%',
           height: 50,
           backgroundColor: theme.colors.primary,
-          opacity: !title || !selectedShiftIds || !selectedStatusId ? 0.5 : 1,
+          opacity: !title || !selectedShiftIds ? 0.5 : 1,
           flexDirection: 'row',
           gap: 10,
           justifyContent: 'center',
@@ -334,17 +334,20 @@ const AddTask = ({closeModal}: {closeModal: () => void}) => {
           borderRadius: 7,
           bottom: 0,
         }}
-        disabled={!title || !selectedShiftIds || !selectedStatusId}
+        disabled={!title || !selectedShiftIds}
         onPress={() => HandleCreateTask()}>
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: 'bold',
-            color: '#fff',
-          }}>
-          Add
-        </Text>
-        {isLoading && <ActivityIndicator size="small" color="#fff" />}
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#fff',
+            }}>
+            Add
+          </Text>
+        )}
       </TouchableOpacity>
     </View>
   );

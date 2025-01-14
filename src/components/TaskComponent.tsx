@@ -24,14 +24,24 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {DBDeleteAsm} from '../utils/db';
 
 const TaskComponent = ({task, refresh}: {task: any; refresh: () => void}) => {
-  const HandleDeleteAsm = async () => {
-    console.log('Delete: ', task.id);
-    await DBDeleteAsm(task.id);
-    refresh();
-  };
   return (
-    <TouchableOpacity>
-      <View></View>
+    <TouchableOpacity
+      style={{
+        width: 200,
+        height: 125,
+        borderRadius: 7,
+        marginRight: 10,
+        padding: 10,
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.2,
+      }}>
+      <Text>{task.title}</Text>
+      <Text>{task.date}</Text>
     </TouchableOpacity>
   );
 };

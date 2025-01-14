@@ -147,6 +147,7 @@ const DBCreateTask = async (
   date: any,
   shiftIds: any,
   statusId: number,
+  tagId: number,
   note: string,
   userId: any,
 ) => {
@@ -158,6 +159,7 @@ const DBCreateTask = async (
         date: date,
         shift_ids: shiftIds,
         status_id: statusId,
+        tag_id: tagId,
         note: note,
         user_id: userId,
       }]);
@@ -172,6 +174,23 @@ const DBCreateTask = async (
   }
 }
 
+const DBFetchTasks = async (userId: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('view_tasks')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      return error;
+    } else {
+      return data;
+    }
+  } catch (error) {
+    console.warn("Error on FetchTasks:", error);
+  }
+}
+
 export {
   DBCreateUserData,
   DBFetchCourses,
@@ -181,4 +200,5 @@ export {
   DBFetchUserID,
   DBDeleteAsm,
   DBCreateTask,
+  DBFetchTasks,
 }

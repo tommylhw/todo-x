@@ -68,7 +68,7 @@ const AsmComponent = ({asm, refresh}: {asm: any, refresh: () => void}) => {
           <View
             style={{
               paddingVertical: 5,
-              paddingHorizontal: 10,
+              paddingHorizontal: 5,
               borderWidth: 1,
               borderColor: '#F8C510',
               borderRadius: 5,
