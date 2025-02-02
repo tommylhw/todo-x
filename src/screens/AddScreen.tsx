@@ -1,41 +1,55 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView, StatusBar, View, Text, Dimensions, Image, TouchableWithoutFeedback, TouchableOpacity, TouchableHighlight } from 'react-native'
-import { useTheme, Button, TextInput } from 'react-native-paper';
+import React, {useState, useCallback, useEffect, useLayoutEffect} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {
+  SafeAreaView,
+  StatusBar,
+  View,
+  Text,
+  Dimensions,
+  Image,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  TouchableHighlight,
+} from 'react-native';
+import {useTheme, Button, TextInput} from 'react-native-paper';
 
 // components
 import GoBackBtn from '../components/GoBackBtn';
+import DoneBtn from '../components/DoneBtn';
 
 // icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AddModal from '../components/AddModal';
+import AddScreenTab from '../components/AddScreenTab';
+import { HeaderBackButton, HeaderBackContext } from '@react-navigation/elements';
 
-const AddScreen = ({ navigation }: { navigation: any }) => {
-
+const AddScreen = ({navigation}: {navigation: any}) => {
   const theme = useTheme();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
-      headerTitle: 'Add New Item',
+      headerTitle: 'New Item',
       headerTitleAlign: 'center',
       headerTransparent: true, // hide header border
       headerTitleStyle: {
         padding: 10,
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
+        color: theme.colors.onSurfaceVariant,
       },
       headerStyle: {
-        backgroundColor: 'red',
-        // shadowColor: 'transparent',
+        backgroundColor: theme.colors.surface,       
       },
-      headerLeft: () => <GoBackBtn navigation={navigation} />
-    })
+      headerLeft: () => React.createElement(HeaderBackButton, {labelVisible: false, onPress: () => navigation.goBack()}),
+      headerRight: () => <DoneBtn navigation={navigation}/>,
+    });
   }, []);
 
   return (
-    <SafeAreaView style={{ backgroundColor: theme.colors.background }}>
+    <SafeAreaView style={{backgroundColor: theme.colors.background}}>
       <StatusBar />
 
       <View
@@ -43,16 +57,17 @@ const AddScreen = ({ navigation }: { navigation: any }) => {
           width: '100%',
           height: '100%',
           alignItems: 'center',
-          paddingHorizontal: 20,
-          paddingVertical: 80,
-        }}
-      >
-        <Text>Add Screen</Text>
+          backgroundColor: '#fff',
+          // paddingHorizontal: 20,
+          paddingVertical: 10,
+        }}>
+        {/* <Text>Add Screen</Text> */}
+        {/* <AddModal isSwipe={() => {}} closeModal={() => {}} /> */}
 
+        <AddScreenTab isSwipe={() => {}} closeModal={() => {}} />
       </View>
-
     </SafeAreaView>
-  )
-}
+  );
+};
 
 export default AddScreen;

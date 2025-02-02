@@ -3,6 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView, StatusBar, View, Text, Dimensions, Image, TouchableWithoutFeedback, TouchableOpacity, TouchableHighlight } from 'react-native'
 import { useTheme, Button, TextInput } from 'react-native-paper';
 import Modal from "react-native-modal";
+import { useNavigation } from '@react-navigation/native';
 
 // components
 import AddModal from './AddModal';
@@ -13,8 +14,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const AddBtn = ({refresh}: {refresh: () => void}) => {
-
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -31,13 +32,20 @@ const AddBtn = ({refresh}: {refresh: () => void}) => {
         style={{
           marginRight: 10,
         }}
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          setModalVisible(true);
+          navigation.navigate('HomeAdd' as never);
+        }}
       >
         <AntDesign name="pluscircle" size={20} color={theme.colors.primary} />
       </TouchableOpacity>
 
+
+      
+
       <Modal
-        isVisible={modalVisible}
+        // isVisible={modalVisible}
+        isVisible={false}
         onBackdropPress={() => setModalVisible(false)}
         style={{ margin: 0 }}
         animationIn="slideInUp"

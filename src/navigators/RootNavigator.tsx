@@ -68,7 +68,7 @@ const BottomTabNavigator = () => {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: '#949699',
         tabBarStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.colors.surface,
           height: 90,
           borderTopWidth: 1,
         },
@@ -138,6 +138,7 @@ const HomeScreenNavigator = () => {
     >
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Testing" component={TestingScreen} />
+      <Stack.Screen name="HomeAdd" component={AddScreen} />
     </Stack.Navigator>
   )
 

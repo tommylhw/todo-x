@@ -32,7 +32,7 @@ const FourthRoute = () => (
   project: FourthRoute,
 }); */
 
-const AddModal = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () => void }) => {
+const AddScreenTab = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () => void }) => {
 
   // const theme = useTheme();
 
@@ -69,6 +69,7 @@ const AddModal = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () => voi
       style={{
         width: '100%',
         height: '90%',
+        
       }}
     >
       <TabView
@@ -78,12 +79,13 @@ const AddModal = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () => voi
           <View
             style={{
               paddingHorizontal: 10,
-              width: '100%',
+              marginHorizontal: 20,
+              // width: '100%',
               height: 36,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: '#EEEEEF',
-              borderRadius: 7,
+              borderRadius: 5,
             }}
           >
             <TabBar
@@ -125,4 +127,4 @@ const AddModal = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () => voi
   )
 }
 
-export default AddModal;
+export default AddScreenTab;

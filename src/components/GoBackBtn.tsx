@@ -16,8 +16,8 @@ const GoBackBtn = ({ navigation }: { navigation: any }) => {
       style={{
         // marginLeft: 5,
         // marginTop: 10,
-        borderWidth: 1,
-        borderColor: theme.colors.outline,
+        // borderWidth: 1,
+        // borderColor: theme.colors.outline,
         borderRadius: 50,
         padding: 7,
       }}
@@ -25,7 +25,7 @@ const GoBackBtn = ({ navigation }: { navigation: any }) => {
     >
       {/* <FontAwesome6 name="arrow-left-long" color="#000" size={25} /> */}
       {/* <EvilIcons name="chevron-left" color="#000" size={50} /> */}
-      <AntDesign name="arrowleft" color={ theme.colors.surface } size={25} />
+      <AntDesign name="arrowleft" color={ theme.colors.onSurfaceVariant } size={25} />
     </TouchableOpacity>
   )
 }
