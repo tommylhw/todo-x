@@ -54,9 +54,9 @@ const AddScreenTab = ({ isSwipe, closeModal }: { isSwipe: any, closeModal: () =>
       case 'deadline':
         return <AddDeadline />;
       case 'asm':
-        return <AddAsm closeModal={closeModal} />;
+        return <AddDeadline />; // <AddAsm closeModal={closeModal} />
       case 'task':
-        return <AddTask closeModal={closeModal} />;
+        return <AddDeadline />; // <AddTask closeModal={closeModal} />
       case 'schedule':
         return <FourthRoute />;
       default:

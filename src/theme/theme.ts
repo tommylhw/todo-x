@@ -6,7 +6,7 @@ const theme = {
     ...DefaultTheme.colors,
     "primary": "#0052dd",
     "onPrimary": "#ffffff",
-    "primaryContainer": "#dbe1ff",
+    "primaryContainer": "rgba(219, 225, 255, 1)",
     "onPrimaryContainer": "#00174c",
     "secondary": "#006e20",
     "onSecondary": "#ffffff",
@@ -33,6 +33,22 @@ const theme = {
     "inverseSurface": "#303034",
     "inverseOnSurface": "#f2f0f4",
     "inversePrimary": "#b4c5ff",
+    "dark": {
+      "level0": "#000000",
+      "level1": "#232B2B",
+      "level2": "#352F36",
+      "level3": "#3B444C",
+      "level4": "#414A4C",
+      "level5": "#7f7f7f"
+    },
+    "light": {
+      "level0": "#ffffff",
+      "level1": "#f9f9f9",
+      "level2": "#f4f4f4",
+      "level3": "#f0f0f0",
+      "level4": "#f0f0f0",
+      "level5": "#f0f0f0"
+    },
     "elevation": {
       "level0": "transparent",
       "level1": "#f1f3fd",

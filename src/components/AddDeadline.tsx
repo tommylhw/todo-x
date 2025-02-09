@@ -1,4 +1,10 @@
-import React, {useState, useCallback, useLayoutEffect} from 'react';
+import React, {
+  useState,
+  useCallback,
+  useLayoutEffect,
+  useEffect,
+  useRef,
+} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {
   ScrollView,
@@ -16,22 +22,41 @@ import {
 import {useTheme, Button, TextInput, Switch, Divider} from 'react-native-paper';
 import DatePicker from 'react-native-date-picker';
 import Modal from 'react-native-modal';
+import {useNavigation} from '@react-navigation/native';
+
+// components
+import TagsModal from './TagsModal';
+import DoneBtn from './DoneBtn';
 
 // icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {transparent} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+
+// backend
+import {DBFetchTagsByUserId, DBCreateDeadline} from '../utils/db';
+
+// Redux Toolkit
+import {useSelector, useDispatch} from 'react-redux';
+import {selectCurrentUserID} from '../stores/AuthSlice';
 
 const AddDeadline = () => {
   const theme = useTheme();
+  const navigation = useNavigation();
+  const currentUserID = useSelector(selectCurrentUserID);
 
   const [title, setTitle] = useState('');
   const [note, setNote] = useState('');
-  const [date, setDate] = useState(new Date());
+  const [datetime, setDatetime] = useState<any>(() => {
+    const defaultDueTime: any = new Date();
+    defaultDueTime.setHours(23);
+    defaultDueTime.setMinutes(59);
+    return defaultDueTime;
+  });
   const [dateOpen, setDateOpen] = useState(false);
-  const [tag, setTag] = useState([]);
+  const [tags, setTags] = useState<any>([]);
+  const [tagsList, setTagsList] = useState<any>([]);
 
   const [notificationOn, setNotificationOn] = useState(false);
 
@@ -39,6 +64,95 @@ const AddDeadline = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isSwipe, setIsSwipe] = useState(false);
+
+  // Use the userRef hooks to store the data for the headRight button
+  const dataRef = useRef<any>();
+  useEffect(() => {
+    dataRef.current = {
+      title: title,
+      tags: tags,
+      datetime: datetime,
+      note: note,
+      notificationOn: notificationOn,
+      currentUserID: currentUserID,
+    };
+  }, [title, tags, datetime, note, notificationOn, currentUserID]);
+
+  const handleDBCreateDeadline = async () => {
+    // setIsLoading(true);
+    const action: any = await DBCreateDeadline(
+      dataRef.current.title,
+      dataRef.current.tags.map((tag: any) => tag.id),
+      dataRef.current.datetime,
+      dataRef.current.note,
+      dataRef.current.notificationOn,
+      dataRef.current.currentUserID,
+    );
+    if (action) {
+      console.log('handleDBCreateDeadline: ', action);
+      // setIsLoading(false);
+      navigation.goBack();
+    }
+  };
+
+  useLayoutEffect(() => {
+    // Use `setOptions` to update the button that we previously specified
+    // Now the button includes an `onPress` handler to update the count
+    navigation.setOptions({
+      headerRight: () => <DoneBtn onPress={() => handleDBCreateDeadline()} />,
+    });
+  }, [navigation, handleDBCreateDeadline]);
+
+  const getTextColor = (bgColor: string) => {
+    // Convert hex color to RGB
+    const rgb = parseInt(bgColor.replace('#', ''), 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = (rgb >> 0) & 0xff;
+
+    // Calculate the relative luminance
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+    // Return white or black based on luminance
+    return luminance > 128 ? 'black' : 'white';
+  };
+
+  const HandleFetchTagsByUserId = async () => {
+    setIsLoading(true);
+    const result: any = await DBFetchTagsByUserId(currentUserID);
+    console.log('HandleFetchTagsByUserId: ', result);
+
+    const tagsWithTextColor = result.map((tag: any) => ({
+      ...tag,
+      text_color: getTextColor(tag.color_code),
+    }));
+
+    setTagsList(tagsWithTextColor);
+    setIsLoading(false);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const updateSelectedTags = (selectedTags: []) => {
+    setTags(selectedTags);
+    console.log('updateSelectedTags: ', selectedTags);
+  };
+
+  useEffect(() => {
+    HandleFetchTagsByUserId();
+    // set the default due time for the asm
+    const defaultDueTime: any = new Date();
+    defaultDueTime.setHours(23);
+    defaultDueTime.setMinutes(59);
+
+    setDatetime(defaultDueTime);
+  }, []);
+
+  useEffect(() => {
+    console.log('tags: ', tags);
+  }, [tags]);
 
   return (
     <ScrollView
@@ -59,7 +173,7 @@ const AddDeadline = () => {
           style={{
             width: '100%',
             marginBottom: 10,
-            paddingHorizontal: 10,
+            paddingHorizontal: 8,
           }}>
           {/* <Text>Title</Text> */}
 
@@ -75,16 +189,14 @@ const AddDeadline = () => {
               // marginVertical: 5,
               // height: 50,
             }}
-            outlineStyle={
-              {
-                // borderRadius: 7,
-              }
-            }
+            outlineStyle={{
+              borderWidth: 0,
+            }}
             contentStyle={{
               fontSize: 24,
             }}
             placeholderTextColor={theme.colors.outline}
-            activeOutlineColor="rgba(0,0,0,0)"
+            activeOutlineColor={theme.colors.primary}
             outlineColor="rgba(150, 43, 43, 0)"
           />
         </View>
@@ -110,16 +222,61 @@ const AddDeadline = () => {
           <TouchableOpacity
             style={{
               flex: 0.7,
+              paddingVertical: 5,
             }}
             onPress={() => setModalVisible(true)}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontStyle: 'italic',
-                color: theme.colors.outline,
-              }}>
-              Empty
-            </Text>
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}>
+              {tags.length > 0 ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    // flexWrap: 'wrap',
+                    gap: 5,
+                  }}>
+                  {tags.map((tag: any, index: number) => (
+                    <View
+                      key={index}
+                      style={{
+                        backgroundColor: tag.color_code,
+                        padding: 5,
+                        borderRadius: 5,
+                        flexDirection: 'row',
+                      }}>
+                      <Text
+                        style={{
+                          color: tag.text_color,
+                        }}>
+                        # {tag.title}
+                      </Text>
+                      <TouchableOpacity
+                        style={{
+                          marginLeft: 5,
+                        }}
+                        onPress={() => {
+                          setTags(tags.filter((t: any) => t.id !== tag.id));
+                        }}>
+                        <AntDesign
+                          name="close"
+                          size={16}
+                          color={tag.text_color}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontStyle: 'italic',
+                    color: theme.colors.outline,
+                  }}>
+                  Empty
+                </Text>
+              )}
+            </ScrollView>
           </TouchableOpacity>
         </View>
 
@@ -157,7 +314,7 @@ const AddDeadline = () => {
                 borderRadius: 7,
               }}
               onPress={() => setDateOpen(true)}>
-              <Text>{date.toDateString()}</Text>
+              <Text>{datetime.toDateString()}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{
@@ -171,11 +328,11 @@ const AddDeadline = () => {
               }}
               onPress={() => setDateOpen(true)}>
               <Text>
-                {date
+                {datetime
                   .toLocaleTimeString()
                   .localeCompare(new Date().toLocaleTimeString()) === 0
                   ? 'Now'
-                  : date.toLocaleTimeString('en-US', {
+                  : datetime.toLocaleTimeString('en-US', {
                       hour: 'numeric',
                       minute: 'numeric',
                       hour12: false,
@@ -187,11 +344,11 @@ const AddDeadline = () => {
               modal
               mode="datetime"
               open={dateOpen}
-              date={date}
-              onConfirm={date => {
-                setDate(date);
+              date={datetime}
+              onConfirm={datetime => {
+                setDatetime(datetime);
                 setDateOpen(false);
-                console.log('date: ', date);
+                console.log('date: ', datetime);
               }}
               onCancel={() => setDateOpen(false)}
             />
@@ -246,12 +403,12 @@ const AddDeadline = () => {
               height: 200,
             }}
             outlineStyle={{
-              borderRadius: 7,
+              borderWidth: 0,
             }}
             contentStyle={{
               fontSize: 16,
             }}
-            activeOutlineColor="rgba(0,0,0,0)"
+            activeOutlineColor={theme.colors.primary}
             outlineColor="rgba(0,0,0,0)"
           />
         </View>
@@ -259,7 +416,7 @@ const AddDeadline = () => {
 
       <Modal
         isVisible={modalVisible}
-        onBackdropPress={() => setModalVisible(false)}
+        onBackdropPress={() => closeModal()}
         style={{margin: 0}}
         animationIn="slideInUp"
         animationOut="slideOutDown"
@@ -270,56 +427,13 @@ const AddDeadline = () => {
         }}
         onSwipeComplete={() => setModalVisible(false)}
         onSwipeCancel={() => setIsSwipe(false)}>
-        <View
-          style={{
-            flex: 1,
-            width: '100%',
-            height: '50%',
-            alignItems: 'center',
-            paddingHorizontal: 20,
-            paddingVertical: 20,
-            position: 'absolute',
-            bottom: 0,
-            backgroundColor: '#fff',
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-          }}>
-          {/* Swipe Indicator */}
-          <View
-            style={{
-              width: '20%',
-              height: 5,
-              backgroundColor: isSwipe ? '#000' : '#ccc',
-              borderRadius: 100,
-              marginBottom: 20,
-            }}></View>
-          {/* Header */}
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginBottom: 10,
-            }}>
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: 'bold',
-                // color: theme.colors.primary,
-                color: '#000',
-              }}>
-              New Event
-            </Text>
-            <TouchableOpacity>
-              <AntDesign
-                name="close"
-                size={24}
-                color="#000"
-                onPress={() => setModalVisible(false)}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <TagsModal
+          isSwipe={() => {}}
+          updateSelectedTags={updateSelectedTags}
+          closeModal={closeModal}
+          tagsInit={tags}
+          tagsList={tagsList}
+        />
       </Modal>
 
       {/* <TouchableOpacity

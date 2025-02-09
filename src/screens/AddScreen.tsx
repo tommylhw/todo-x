@@ -44,7 +44,6 @@ const AddScreen = ({navigation}: {navigation: any}) => {
         backgroundColor: theme.colors.surface,       
       },
       headerLeft: () => React.createElement(HeaderBackButton, {labelVisible: false, onPress: () => navigation.goBack()}),
-      headerRight: () => <DoneBtn navigation={navigation}/>,
     });
   }, []);
 

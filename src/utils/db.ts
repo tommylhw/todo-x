@@ -12,7 +12,7 @@ const DBCreateUserData = async (auth_id: string, username: string, email: string
       }]);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       return JSON.stringify(data);
     }
@@ -29,7 +29,7 @@ const DBFetchUserData = async (auth_id: string) => {
       .eq('auth_id', auth_id);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       return JSON.stringify(data);
     }
@@ -46,7 +46,7 @@ const DBFetchUserID = async (auth_id: string) => {
       .eq('auth_id', auth_id);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       // console.log("#############", data[0].id);
       return data[0].id;
@@ -62,10 +62,10 @@ const DBFetchCourses = async () => {
     const { data, error } = await supabase
       .from('courses')
       .select('*')
-      .eq('enrolled_user', '22');
+      .eq('user_id', '22');
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       return JSON.stringify(data);
     }
@@ -82,7 +82,7 @@ const DBFetchAsms = async (userId: any) => {
       .eq('user_id', userId);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       return data;
     }
@@ -116,7 +116,7 @@ const DBCreateAsm = async (
       }]);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       return JSON.stringify(data);
     }
@@ -133,7 +133,7 @@ const DBDeleteAsm = async (id: any) => {
     .eq('id', id);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       console.log("DELETED ASM: ", id);
     }
@@ -165,7 +165,7 @@ const DBCreateTask = async (
       }]);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       return JSON.stringify(data);
     }
@@ -182,12 +182,136 @@ const DBFetchTasks = async (userId: any) => {
       .eq('user_id', userId);
 
     if (error) {
-      return error;
+      console.warn(error);
     } else {
       return data;
     }
   } catch (error) {
     console.warn("Error on FetchTasks:", error);
+  }
+}
+
+const DBFetchTagsByUserId = async (userId: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('tag')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 0);
+
+    if (error) {
+      console.warn(error);
+    } else {
+      return data;
+    }
+  } catch (error) {
+    console.warn("Error on FetchTagsByUserId:", error);
+  }
+}
+
+const DBDeleteTag = async (tagId: number) => {
+  try {
+    const { error } = await supabase
+      .from('tag')
+      .delete()
+      .eq('id', tagId);
+
+    if (error) {
+      console.warn(error);
+    } else {
+      return "SUCCESS";
+      console.log("DELETED TAG: ", tagId);
+    }
+  } catch (error) {
+    console.warn("Error on DeleteTag:", error);
+  }
+}
+
+const DBCreateTag = async (title: string, tag_type: string, colorCode: string, userId: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('tag')
+      .insert([{
+        title: title,
+        tag_type: tag_type,
+        color_code: colorCode,
+        user_id: userId,
+      }]);
+
+    if (error) {
+      console.warn(error);
+    } else {
+      return JSON.stringify(data);
+    }
+  } catch (error) {
+    console.warn("Error on CreateTag:", error);
+  }
+}
+
+const DBUpdateTag = async (tagId: number, title: string, colorCode: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('tag')
+      .update({
+        title: title,
+        color_code: colorCode,
+      })
+      .eq('id', tagId);
+
+    if (error) {
+      console.warn(error);
+    } else {
+      return JSON.stringify(data);
+    }
+  } catch (error) {
+    console.warn("Error on UpdateTag:", error);
+  }
+}
+
+const DBCreateDeadline = async (
+  title: string,
+  tagIds: [],
+  dueDatetime: any,
+  note: string,
+  notiOn: boolean,
+  userId: any,
+) => {
+  try {
+    const { data, error } = await supabase
+      .from('deadline')
+      .insert([{
+        title: title,
+        tag_ids: tagIds,
+        due_datetime: dueDatetime,
+        note: note,
+        noti_on: notiOn,
+        user_id: userId,
+      }]);
+
+    if (error) {
+      console.warn(error);
+    } else {
+      return JSON.stringify(data);
+    }
+  } catch (error) {
+    console.warn("Error on CreateDeadline:", error);
+  }
+}
+
+const DBFetchDeadline = async (userId: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('deadline')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.warn(error);
+    } else {
+      return data;
+    }
+  } catch (error) {
+    console.warn("Error on FetchDeadline:", error);
   }
 }
 
@@ -201,4 +325,10 @@ export {
   DBDeleteAsm,
   DBCreateTask,
   DBFetchTasks,
+  DBFetchTagsByUserId,
+  DBDeleteTag,
+  DBCreateTag,
+  DBUpdateTag,
+  DBCreateDeadline,
+  DBFetchDeadline,
 }

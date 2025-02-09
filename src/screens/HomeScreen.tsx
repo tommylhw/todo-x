@@ -32,6 +32,7 @@ import {
   DBFetchCourses,
   DBFetchUserData,
   DBFetchTasks,
+  DBFetchDeadline,
 } from '../utils/db';
 
 // import Carousel from 'react-native-reanimated-carousel';
@@ -78,6 +79,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
   const [asmData, setAsmData] = useState<any>();
   const [tasksData, setTasksData] = useState<any>();
+  const [deadlineData, setDeadlineData] = useState<any>();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -136,6 +138,37 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     setAsmData(upComingAsm);
   };
 
+  const HandleFetchDeadline = async () => {
+    const res: any = await DBFetchDeadline(curreutUserID);
+
+    const upComingDeadline = res
+      .map((deadline: any) => {
+        const dueDate = new Date(deadline.due_datetime);
+        const today = new Date();
+
+        dueDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const options = {timeZone: 'Asia/Hong_Kong'};
+
+        const dueDateHKG = dueDate.toLocaleDateString('en-US', options);
+        const todayHKG = today.toLocaleDateString('en-US', options);
+
+        const timeDiff = dueDate.getTime() - today.getTime(); // Difference in milliseconds
+        const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+
+        // console.log("TODAY:", today, "DUE:", dueDate, "Diff:", diffDays); // Output: 4
+        deadline.diffDays = diffDays;
+
+        return deadline;
+      })
+      .sort((a: any, b: any) => a.diffDays - b.diffDays)
+      .filter((deadline: any) => deadline.diffDays > 0);
+
+    console.log('upComingDeadline: ', upComingDeadline);
+    setDeadlineData(upComingDeadline);
+  };
+
   const HandleFetchTasks = async () => {
     const res: any = await DBFetchTasks(curreutUserID);
 
@@ -148,7 +181,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     const upComingWeekTasks = res.filter((task: any) => {
       const taskDate = new Date(task.date);
       taskDate.setHours(0, 0, 0, 0); // Set time to midnight
-      
+
       return taskDate >= today && taskDate < nextWeek;
     });
 
@@ -175,6 +208,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
       HandleAuthGetCurrentUser();
       HandleFetchAsms();
       HandleFetchTasks();
+      HandleFetchDeadline();
       return () => {
         // Do something when the screen is unfocused
         // Useful for cleanup functions
@@ -188,6 +222,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     HandleAuthGetCurrentUser();
     HandleFetchAsms();
     HandleFetchTasks();
+    HandleFetchDeadline();
   }, []);
 
   // Refresh Control
@@ -197,6 +232,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
     FetchCourseData();
     HandleFetchAsms();
+    HandleFetchDeadline();
     HandleFetchTasks();
     HandleAuthGetCurrentUser();
 
@@ -382,7 +418,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
-                Upcoming Assignments
+                Upcoming deadlines
               </Text>
               <AddBtn refresh={() => onRefresh()} />
             </View>

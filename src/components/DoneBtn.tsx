@@ -23,11 +23,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const DoneBtn = ({navigation}: {navigation: any}) => {
+const DoneBtn = ({onPress}: {onPress: () => void}) => {
   const theme = useTheme();
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <Text
         style={{
           color: theme.colors.primary,
