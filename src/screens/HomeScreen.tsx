@@ -24,6 +24,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // components
 import GoBackBtn from '../components/GoBackBtn';
 import AddBtn from '../components/AddBtn';
+import TaskComponent from '../components/TaskComponent';
+import DeadlineComponent from '../components/DeadlineComponent';
 
 // backend
 import {AuthGetCurrentUser} from '../utils/auth';
@@ -48,8 +50,6 @@ import {
   selectCurrentUserID,
 } from '../stores/AuthSlice';
 import {setCourses, selectCourses} from '../stores/CoursesSlice';
-import AsmComponent from '../components/AsmComponent';
-import TaskComponent from '../components/TaskComponent';
 
 const dummyReminders = [
   {
@@ -443,10 +443,10 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
                   paddingVertical: 10,
                   backgroundColor: '#fff',
                 }}>
-                {asmData?.map((asm: any, index: number) => (
-                  <AsmComponent
+                {deadlineData?.map((deadline: any, index: number) => (
+                  <DeadlineComponent
                     key={index}
-                    asm={asm}
+                    deadline={deadline}
                     refresh={() => onRefresh()}
                   />
                 ))}

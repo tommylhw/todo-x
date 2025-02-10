@@ -40,8 +40,8 @@ const TaskComponent = ({task, refresh}: {task: any; refresh: () => void}) => {
         },
         shadowOpacity: 0.2,
       }}>
-      <Text>{task.title}</Text>
-      <Text>{task.date}</Text>
+      <Text>{task?.title}</Text>
+      <Text>{task?.date}</Text>
     </TouchableOpacity>
   );
 };

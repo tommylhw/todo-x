@@ -50,6 +50,7 @@ import ScheduleScreen from '../screens/ScheduleScreen';
 import ProjectScreen from '../screens/ProjectScreen';
 import TestingScreen from '../screens/TestingScreen';
 import AddScreen from '../screens/AddScreen';
+import DeadlineScreen from '../screens/DeadlineScreen';
 
 import AddBtn from '../components/AddNavigatorBtn';
 
@@ -140,6 +141,7 @@ const HomeScreenNavigator = () => {
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Testing" component={TestingScreen} />
       <Stack.Screen name="HomeAdd" component={AddScreen} />
+      <Stack.Screen name="HomeDeadline" component={DeadlineScreen} />
     </Stack.Navigator>
   )
 

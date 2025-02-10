@@ -16,7 +16,7 @@ const theme = {
     "onTertiary": "#ffffff",
     "tertiaryContainer": "#ffddb6",
     "onTertiaryContainer": "#2a1800",
-    "error": "#ba1a1a",
+    "error": "#EC3931",
     "onError": "#ffffff",
     "errorContainer": "#ffdad6",
     "onErrorContainer": "#410002",
